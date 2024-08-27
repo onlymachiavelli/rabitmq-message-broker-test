@@ -1,0 +1,28 @@
+version: "3"
+services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  sender:
+    build: ./sender
+    command: node index.js
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3000:3000"
+
+  consumer:
+    build: ./receiver
+    command: node index.js
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq
+    depends_on:
+      - rabbitmq
+
+    ports:
+      - "3001:3001"
